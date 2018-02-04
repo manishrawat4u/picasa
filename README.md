@@ -1,24 +1,25 @@
 Picasa Video Upload
 
-var gotStream = got.stream(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+``` js
+  var gotStream = got.stream(`https://www.example.com/file`, {
     encoding: null,
     headers: {
-      'Authorization': 'Bearer ' + accessToken
+      //'Authorization': 'Bearer ' + accessToken
     }
   });
 
   var videoData = {
     body: gotStream,
-    contentLength: gdriveInfo.size,
-    mimeType: gdriveInfo.mimeType,
-    title: gdriveInfo.name,
-    summary: `GP_${fileId}`
+    contentLength: 1200102, // in bytes. max content limit is 1GB as of now.
+    mimeType: 'video/mp4', //should be actual mime type of video
+    title: 'title of the video',
+    summary: `summary for the video`
   };
 
-  picasa.postVideo(accessToken, albumId, videoData, (a, b, c, d, e) => {
+  picasa.postVideo(accessToken, albumId, videoData, (a) => {
     console.log(`this.bytes: ${bytesReceived}, gotStream.isPaused: ${gotStream.isPaused()}, ` + JSON.stringify(a));
   });
-
+```
 
 
 
