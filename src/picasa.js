@@ -4,6 +4,9 @@ const querystring = require('querystring')
 
 const executeRequest = require('./executeRequest')
 
+var axios = require('axios');
+var got = require('got');
+
 const GOOGLE_AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/auth'
 const GOOGLE_API_HOST = 'https://www.googleapis.com'
 const GOOGLE_API_PATH = '/oauth2/v3/token'
@@ -28,7 +31,8 @@ Picasa.prototype.createAlbum = createAlbum
 //Video 
 Picasa.prototype.getVideos = getVideos
 Picasa.prototype.createResumableVideo = createResumableVideo
-
+Picasa.prototype.postVideo = postVideo
+Picasa.prototype.resumeUpload = resumeUpload
 // Auth utilities
 Picasa.prototype.getAuthURL = getAuthURL
 Picasa.prototype.getAccessToken = getAccessToken
@@ -401,35 +405,50 @@ async function resumeUpload(photoLocation, videoData, progressCb) {
   return new Promise((resolve, reject) => {
     //double check the logic
     var fileSizeToUpload = videoData.range ? videoData.range.end : videoData.contentLength, rangeStart = videoData.range ? videoData.range.start : 0, totalSize = videoData.contentLength;
-    videoData.body.pipe(got.stream(photoCreateRes.photoLocation, {
-      method: "PUT",
-      headers: {
-        'Content-Length': fileSizeToUpload,
-        'Content-Range': `bytes ${rangeStart}-${rangeStart + fileSizeToUpload - 1}/${totalSize}`,
-        'Expect': ''
-      }
-    }).on('request', function (uploadRequest) {
-      console.log('Upload request initiated...');
-      progressCb({ status: 'Upload request initiated', statusCode: 1 });
-      var initRequestBytesWritten = uploadRequest.connection.bytesWritten;
-      interval = setInterval(function () {
-        var actualDataBytesWritten = (uploadRequest.connection.bytesWritten - initRequestBytesWritten);
-        progressCb({ status: 'Uploading', statusCode: 2, bytesWritten: actualDataBytesWritten, timestamp: new Date() });
-      }, 500);
-    }).on('response', function (whateverresponse) {
-      progressCb({ status: 'Upload completed.', statusCode: 4, timestamp: new Date() }); console.log('Upload request response recvd.'); console.log('Status Code: ' + whateverresponse.statusCode); resolve({ status: 'OK' });
-    }).on('error', function (requestUploadErr) {
-      console.log('error occurred while uploading file.. ' + JSON.stringify(requestUploadErr));
-      if (requestUploadErr.statusCode === 308) {
-        console.log('continuing as code is 308');
-        progressCb({ status: 'Upload completed.', statusCode: 5, timestamp: new Date() });
-        resolve({ status: 'OK' });
-      }
-      else {
-        progressCb({ status: 'Upload error.', statusCode: 3, timestamp: new Date() });
-        reject({ error: 'An error occurred: ', errorObject: requestUploadErr });
-      }
-    }));
+    // var interval;
+    var bytesReceived = 0;
+    videoData.body
+      .on('data', function (chunk) {
+        bytesReceived += chunk.length;
+      })
+      .pipe(got.stream(photoLocation, {
+        method: "PUT",
+        headers: {
+          'Content-Length': fileSizeToUpload,
+          'Content-Range': `bytes ${rangeStart}-${rangeStart + fileSizeToUpload - 1}/${totalSize}`,
+          'Expect': ''
+        }
+      })
+      .on('uploadProgress',(progress)=>{
+        progressCb(progress);
+      })
+      // .on('request', function (uploadRequest) {
+      //   console.log('Upload request initiated...');
+      //   progressCb({ status: 'Upload request initiated', statusCode: 1 });
+      //   var initRequestBytesWritten = uploadRequest.connection.bytesWritten;
+      //   interval = setInterval(function () {
+      //     var actualDataBytesWritten = (uploadRequest.connection.bytesWritten - initRequestBytesWritten);
+      //     progressCb({ status: 'Uploading', bytesReceived: bytesReceived, statusCode: 2, bytesWritten: actualDataBytesWritten, timestamp: new Date() });
+      //   }, 500);
+      // })
+      .on('response', function (whateverresponse) {
+        //progressCb({ status: 'Upload completed.', statusCode: 4, timestamp: new Date() }); 
+        console.log('Upload request response recvd.'); console.log('Status Code: ' + whateverresponse.statusCode); resolve({ status: 'OK' });
+        //clearInterval(interval);
+      })
+      .on('error', function (requestUploadErr) {
+        console.log('error occurred while uploading file.. ' + JSON.stringify(requestUploadErr));
+        if (requestUploadErr.statusCode === 308) {
+          console.log('continuing as code is 308');
+          //progressCb({ status: 'Upload completed.', statusCode: 5, timestamp: new Date() });
+          resolve({ status: 'OK' });
+        }
+        else {
+          //progressCb({ status: 'Upload error.', statusCode: 3, timestamp: new Date() });
+          reject({ error: 'An error occurred: ', errorObject: requestUploadErr });
+        }
+        //  clearInterval(interval);
+      }));
   });
 }
 
