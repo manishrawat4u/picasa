@@ -1,6 +1,35 @@
-Picasa Video Upload
+
+CI
+--
+
+[![Build Status](https://travis-ci.org/esteban-uo/picasa.svg)](https://travis-ci.org/esteban-uo/picasa)
+
+A simple Picasa Web Albums client (2.0) for nodejs. Includes video upload support..
+
+Install
+-------
+
+```
+$ npm install --save picasa-extended
+```
+
+Usage
+-----
+
+```js
+const got = require('got');
+  
+const Picasa = require('picasa-extended');
+  
+const picasa = new Picasa()
+```
+
+**NOTE**: Every Picasa API request requires an access token.
+
+#### Picasa Video Upload
 
 ``` js
+  
   var gotStream = got.stream(`https://www.example.com/file`, {
     encoding: null,
     headers: {
@@ -8,47 +37,23 @@ Picasa Video Upload
     }
   });
 
-  var videoData = {
-    body: gotStream,
-    contentLength: 1200102, // in bytes. max content limit is 1GB as of now.
-    mimeType: 'video/mp4', //should be actual mime type of video
-    title: 'title of the video',
-    summary: `summary for the video`
-  };
+  gotStream.on('response', () => {
+    var videoData = {
+      body: gotStream,
+      contentLength: 1200102, // in bytes. max content limit is 1GB as of now.
+      mimeType: 'video/mp4', //should be actual mime type of video
+      title: 'title of the video',
+      summary: `summary for the video`
+    };
 
-  picasa.postVideo(accessToken, albumId, videoData, (a) => {
-    console.log(`this.bytes: ${bytesReceived}, gotStream.isPaused: ${gotStream.isPaused()}, ` + JSON.stringify(a));
+    picasa.postVideo(accessToken, albumId, videoData, (a) => {
+      console.log(`this.bytes: ${bytesReceived}, gotStream.isPaused: ${gotStream.isPaused()}, ` + JSON.stringify(a));
+    });
   });
 ```
 
+#### NOTE: BELOW API'S SHOULD WORK AS IS PROVIDED BY ORIGINAL PICASA API.
 
-
-CI
---
-
-[![Build Status](https://travis-ci.org/esteban-uo/picasa.svg)](https://travis-ci.org/esteban-uo/picasa)
-
-A simple Picasa Web Albums client (2.0) for nodejs. Includes Auth helpers.
-
-Install
--------
-
-```
-$ npm install --save picasa
-```
-
-Usage
------
-
-(Check out the examples dir too, rename config.example.json > config.json and add your credentials)
-
-```js
-const Picasa = require('picasa')
-
-const picasa = new Picasa()
-```
-
-**NOTE**: Every Picasa API request requires an access token.
 
 ### Photos
 
