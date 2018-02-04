@@ -1,8 +1,8 @@
 {
   "name": "picasa-extended",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Picasa web albums client for node (with video upload support)",
-  "main": "index.js",
+  "main": "src/picasa-extended.js",
   "directories": {
     "example": "examples"
   },
