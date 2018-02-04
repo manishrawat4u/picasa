@@ -1,16 +1,22 @@
 {
-  "name": "picasa",
-  "version": "1.0.6",
-  "description": "Picasa web albums client for node",
-  "main": "src/picasa.js",
+  "name": "picasa-extended",
+  "version": "2.0.0",
+  "description": "Picasa web albums client for node (with video upload support)",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "axios": "^0.17.1",
+    "got": "^8.0.3"
+  },
+  "devDependencies": {},
   "scripts": {
-    "test": "mocha src/ --harmony",
-    "test-debug": "mocha src/ --harmony -t 6000  --debug-brk",
-    "test-watch": "mocha src/ --harmony --watch"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/esteban-uo/picasa.git"
+    "url": "git+https://github.com/manishrawat4u/picasa.git"
   },
   "keywords": [
     "picasa",
@@ -19,24 +25,13 @@
     "data",
     "api",
     "client",
-    "node"
+    "node",
+    "video"
   ],
-  "author": "Esteban Uscanga Olea <uscanga47@gmail.com> (https://github.com/esteban-uo)",
-  "license": "ISC",
+  "author": "Manish Rawat <manishrawat4u@gmail.com> (https://github.com/manishrawat4u)",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/esteban-uo/picasa/issues"
+    "url": "https://github.com/manishrawat4u/picasa/issues"
   },
-  "homepage": "https://github.com/esteban-uo/picasa#readme",
-  "devDependencies": {
-    "chai": "^3.4.1",
-    "mocha": "^2.3.3",
-    "rewire": "^2.5.0",
-    "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0"
-  },
-  "dependencies": {
-    "axios": "^0.17.1",
-    "got": "^8.0.3",
-    "request": "^2.65.0"
-  }
+  "homepage": "https://github.com/manishrawat4u/picasa#readme"
 }

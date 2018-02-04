@@ -1,3 +1,27 @@
+Picasa Video Upload
+
+var gotStream = got.stream(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+    encoding: null,
+    headers: {
+      'Authorization': 'Bearer ' + accessToken
+    }
+  });
+
+  var videoData = {
+    body: gotStream,
+    contentLength: gdriveInfo.size,
+    mimeType: gdriveInfo.mimeType,
+    title: gdriveInfo.name,
+    summary: `GP_${fileId}`
+  };
+
+  picasa.postVideo(accessToken, albumId, videoData, (a, b, c, d, e) => {
+    console.log(`this.bytes: ${bytesReceived}, gotStream.isPaused: ${gotStream.isPaused()}, ` + JSON.stringify(a));
+  });
+
+
+
+
 CI
 --
 
