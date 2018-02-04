@@ -35,6 +35,8 @@
     "sinon-chai": "^2.8.0"
   },
   "dependencies": {
+    "axios": "^0.17.1",
+    "got": "^8.0.3",
     "request": "^2.65.0"
   }
 }
