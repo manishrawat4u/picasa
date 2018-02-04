@@ -7,7 +7,7 @@ const sinonChai = require('sinon-chai')
 const expect = chai.expect
 chai.use(sinonChai)
 
-const Picasa = require('./picasa')
+const Picasa = require('./picasa-extended')
 
 describe('Picasa', () => {
   let picasa, stub
